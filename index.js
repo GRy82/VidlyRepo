@@ -6,7 +6,7 @@ app.use(express.json());
 
 const genres = [
     { id: 1, genreTitle: 'sample-genre' },
-    { id: 2, genreTitle: 'comedy' }
+    { id: 2, genreTitle: 'comedy' },
 ];
 
 app.get('/', (req, res) => {
@@ -14,12 +14,13 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api/genres', (req, res) => {
+    
     res.send(genres);
 });
 
 app.get('/api/genres/:id', (req, res) => {
     const genre = genres.find(c => c.id === parseInt(req.params.id));
-    if(!genre) return res.status(404).send('genre not found.');
+    if(!genre) return res.status(404).send('A genre with that id does not exist.');
 
     res.send(genre);
 });
@@ -38,6 +39,18 @@ app.post('/api/genres', (req, res) => {
     res.send(genre);
 });
 
+app.put('/api/genres/:id', (req, res) => {
+    const genre = genres.find(c => c.id === parseInt(req.params.id));
+    if(!genre) 
+        return res.status(404).send('A genre with that id does not exist.');
+
+    const result = validateGenre(req.body);
+    if(result.error) 
+        return res.status(400).send(result.error.details[0].message);
+
+    genre.genreTitle = req.body.genreTitle;
+    res.send(genre);
+});
 
 function validateGenre(genre){
     const schema =  Joi.object({
