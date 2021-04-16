@@ -2,8 +2,11 @@ const express = require('express');
 const app = express();
 const Joi = require('joi');
 
+app.use(express.json());
+
 const genres = [
-    { id: 1, genre: 'sample-genre' }
+    { id: 1, genreTitle: 'sample-genre' },
+    { id: 2, genreTitle: 'comedy' }
 ];
 
 app.get('/', (req, res) => {
@@ -20,6 +23,29 @@ app.get('/api/genres/:id', (req, res) => {
 
     res.send(genre);
 });
+
+app.post('/api/genres', (req, res) => {
+    const result = validateGenre(req.body);
+    if(result.error)
+       return res.status(400).send(result.error.details[0].message);
+
+    const genre = {
+        id: genres.length + 1,
+        genreTitle: req.body.genreTitle
+    };
+
+    genres.push(genre);
+    res.send(genre);
+});
+
+
+function validateGenre(genre){
+    const schema =  Joi.object({
+        genreTitle: Joi.string().min(3).required()
+    });
+
+    return schema.validate(genre);
+}
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening on port ${port}...`));
