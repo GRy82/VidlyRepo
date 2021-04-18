@@ -1,8 +1,12 @@
 const express = require('express');
 const app = express();
+const logger = require('./logger');
+const authenticator = require('./authenticator');
 const Joi = require('joi');
 
 app.use(express.json());
+app.use(logger);
+app.use(authenticator);
 
 const genres = [
     { id: 1, genreTitle: 'sample-genre' },
@@ -20,7 +24,8 @@ app.get('/api/genres', (req, res) => {
 
 app.get('/api/genres/:id', (req, res) => {
     const genre = genres.find(c => c.id === parseInt(req.params.id));
-    if(!genre) return res.status(404).send('A genre with that id does not exist.');
+    if(!genre) 
+        return res.status(404).send('A genre with that id does not exist.');
 
     res.send(genre);
 });
@@ -69,6 +74,7 @@ function validateGenre(genre){
 
     return schema.validate(genre);
 }
+
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening on port ${port}...`));
