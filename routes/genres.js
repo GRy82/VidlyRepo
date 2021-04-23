@@ -1,58 +1,66 @@
-const express = require(express);
+const express = require('express');
 const router = express.Router();
+const Joi = require('joi');
+const mongoose = require('mongoose');
 
-const genres = [
-    { id: 1, genreTitle: 'sample-genre' },
-    { id: 2, genreTitle: 'comedy' },
-];
+const Genre = mongoose.model('Genre', mongoose.Schema({
+    genreTitle: {
+        type: String,
+        required: true,
+        lowercase: true,
+        trim: true,
+        minlength: 3,
+        maxlength: 100
+    }
+}));
 
-router.get('/', (req, res) => {
-    
+router.get('/', async (req, res) => {
+    const genres = await Genre.find().sort('genreTitle');
     res.send(genres);
 });
 
-router.get('/:id', (req, res) => {
-    const genre = genres.find(c => c.id === parseInt(req.params.id));
+router.get('/:id', async (req, res) => {
+    const genre = await Genre.findById(req.params.id);
+
     if(!genre) 
         return res.status(404).send('A genre with that id does not exist.');
 
     res.send(genre);
 });
 
-router.post('/', (req, res) => {
+
+router.post('/', async (req, res) => {
     const result = validateGenre(req.body);
     if(result.error)
        return res.status(400).send(result.error.details[0].message);
 
-    const genre = {
-        id: genres.length + 1,
-        genreTitle: req.body.genreTitle
-    };
+    let genre = new Genre({ genreTitle: req.body.genreTitle });
+    genre = await genre.save();
 
-    genres.push(genre);
     res.send(genre);
 });
 
-router.put('/:id', (req, res) => {
-    const genre = genres.find(c => c.id === parseInt(req.params.id));
-    if(!genre) 
-        return res.status(404).send('A genre with that id does not exist.');
-
+router.put('/:id', async (req, res) => {
     const result = validateGenre(req.body);
     if(result.error) 
         return res.status(400).send(result.error.details[0].message);
 
-    genre.genreTitle = req.body.genreTitle;
-    res.send(genre);
-});
+    const genre = await Genre.findByIdAndUpdate(req.params.id,
+         {genreTitle: req.body.genreTitle }, 
+         { new: true });
 
-router.delete('/:id', (req, res) => {
-    const genre = genres.find(c => c.id === parseInt(req.params.id));
     if(!genre) 
         return res.status(404).send('A genre with that id does not exist.');
 
-    let index = genres.indexOf(genre);
-    genres.splice(index, 1);
+    res.send(genre);
+});
+
+router.delete('/:id', async (req, res) => {
+    const genre = await Genre.findByIdAndRemove(req.params.id);
+
+    if(!genre) 
+        return res.status(404).send('A genre with that id does not exist.');
+
     res.send(genre);
 });
 
