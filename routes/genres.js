@@ -65,7 +65,7 @@ router.delete('/:id', async (req, res) => {
 });
 
 function validateGenre(genre){
-    const schema =  Joi.object({
+    const schema = Joi.object({
         genreTitle: Joi.string().min(3).required()
     });
 

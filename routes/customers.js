@@ -1,18 +1,18 @@
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
-const Joi = require('Joi');
+const Joi = require('joi');
 
 const Customer = mongoose.model('Customer', mongoose.Schema({
-    isGold: {
-        type: Boolean,
-        required: true
-    },
     name: {
         type: String,
         required: true,
         minlength: 4,
         maxlength: 255,
+    },
+    isGold: {
+        type: Boolean,
+        required: true
     },
     phone: {
         type: String,
@@ -83,7 +83,7 @@ function validateCustomer(customer){
     const schema = Joi.object({
         name: Joi.string().minlength(3).required(),
         isGold : Joi.boolean().required(),
-        phone: Join.string().minlength(7).maxlength(17).required()
+        phone: Joi.string().minlength(7).maxlength(17).required()
     });
 
     return schema.validate(customer);
