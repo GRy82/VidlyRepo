@@ -71,6 +71,14 @@ router.put('/:id', async (req, res) => {
     res.send(customer);
 });
 
+router.delete('/:id', async (req, res) => {
+    const customer = await Customer.findByIdAndRemove(req.params.id);
+
+    if(!customer) return res.status(400).send('Could not find a customer with the id provided.');
+
+    res.send(customer);
+});
+
 function validateCustomer(customer){
     const schema = Joi.object({
         name: Joi.string().minlength(3).required(),
