@@ -37,3 +37,31 @@ router.get('/:id', async (req, res) => {
 
     res.send(customer);
 });
+
+router.post('/', (req, res) => {
+    const result = validateCustomer(req.body);
+
+    if(result.error) return res.status(400).send(result.error.details[0].message);
+
+    let customer = new Customer({
+        name: req.body.name,
+        isGold: req.body.isGold,
+        phone: req.body.phone
+    });
+
+    customer = await customer.save();
+
+    res.status(200).send(customer);
+});
+
+function validateCustomer(customer){
+    const schema = Joi.object({
+        name: Joi.string().minlength(3).required(),
+        isGold : Joi.boolean().required(),
+        phone: Join.string().minlength(7).maxlength(17).required()
+    });
+
+    return schema.validate(customer);
+}
+
+module.exports = router;
