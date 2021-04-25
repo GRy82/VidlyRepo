@@ -1,26 +1,7 @@
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
-const Joi = require('joi');
-
-const Customer = mongoose.model('Customer', mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-        minlength: 4,
-        maxlength: 255,
-    },
-    isGold: {
-        type: Boolean,
-        required: true
-    },
-    phone: {
-        type: String,
-        required: true,
-        minlength: 7,
-        maxlength: 17
-    }
-}));
+const { Customer, validate } = require('..models/customer');
 
 router.get('/', async (req, res) => {
     const customers = await Customer.find()
@@ -39,7 +20,7 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-    const result = validateCustomer(req.body);
+    const result = validate(req.body);
 
     if(result.error) return res.status(400).send(result.error.details[0].message);
 
@@ -55,16 +36,16 @@ router.post('/', async (req, res) => {
 });
 
 router.put('/:id', async (req, res) => {
-    const result = validateCustomer(req.body);
+    const result = validate(req.body);
 
     if(result.error) return res.status(400).send(result.error.details[0].message);
   
-    const customer = await Customer.findByIdAndUpdate(req.params.id, {
-        $set: {  name: req.body.name,
-                isGold: req.body.isGold,
-                phone: req.body.phone,
+    const customer = await Customer.findByIdAndUpdate(req.params.id,
+        {   name: req.body.name,
+            isGold: req.body.isGold,
+            phone: req.body.phone,
         }
-    }, { new: true });
+    , { new: true });
 
     if(!customer) return res.status(404).send('Could not find a customer with the id provided.')
 
@@ -78,15 +59,5 @@ router.delete('/:id', async (req, res) => {
 
     res.send(customer);
 });
-
-function validateCustomer(customer){
-    const schema = Joi.object({
-        name: Joi.string().min(3).required(),
-        isGold: Joi.boolean().required(),
-        phone: Joi.string().min(7).max(17).required()
-    });
-
-    return schema.validate(customer);
-}
 
 module.exports = router;
