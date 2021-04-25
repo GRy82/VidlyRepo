@@ -38,7 +38,7 @@ router.get('/:id', async (req, res) => {
     res.send(customer);
 });
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
     const result = validateCustomer(req.body);
 
     if(result.error) return res.status(400).send(result.error.details[0].message);
@@ -51,7 +51,24 @@ router.post('/', (req, res) => {
 
     customer = await customer.save();
 
-    res.status(200).send(customer);
+    res.send(customer);
+});
+
+router.put('/:id', async (req, res) => {
+    const result = validateCustomer(req.body);
+
+    if(result.error) return res.status(400).send(result.error.details[0].message);
+    
+    const customer = await Customer.findByIdAndUpdate(req.params.id,
+        { name: req.body.name },
+        { isGold: req.body.isGold },
+        { phone: req.body.phone },
+        { new: true }
+    );
+
+    if(!customer) return res.status(404).send('Could not find a customer with the id provided.')
+
+    res.send(customer);
 });
 
 function validateCustomer(customer){
