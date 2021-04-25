@@ -5,6 +5,7 @@ const authenticator = require('./authenticator');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const genres = require('./routes/genres');
+const customers = require('./routes/customers');
 const home = require('./routes/home');
 const mongoose = require('mongoose');
 
@@ -17,6 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(helmet());
 app.use('/api/genres', genres);
+app.use('/api/customers', customers);
 app.use('/', home);
 
 //if NODE_ENV is not defined, app.get returns dev env by default.
