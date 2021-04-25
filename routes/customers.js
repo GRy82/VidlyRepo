@@ -58,13 +58,13 @@ router.put('/:id', async (req, res) => {
     const result = validateCustomer(req.body);
 
     if(result.error) return res.status(400).send(result.error.details[0].message);
-    
-    const customer = await Customer.findByIdAndUpdate(req.params.id,
-        { name: req.body.name },
-        { isGold: req.body.isGold },
-        { phone: req.body.phone },
-        { new: true }
-    );
+  
+    const customer = await Customer.findByIdAndUpdate(req.params.id, {
+        $set: {  name: req.body.name,
+                isGold: req.body.isGold,
+                phone: req.body.phone,
+        }
+    }, { new: true });
 
     if(!customer) return res.status(404).send('Could not find a customer with the id provided.')
 
@@ -81,9 +81,9 @@ router.delete('/:id', async (req, res) => {
 
 function validateCustomer(customer){
     const schema = Joi.object({
-        name: Joi.string().minlength(3).required(),
-        isGold : Joi.boolean().required(),
-        phone: Joi.string().minlength(7).maxlength(17).required()
+        name: Joi.string().min(3).required(),
+        isGold: Joi.boolean().required(),
+        phone: Joi.string().min(7).max(17).required()
     });
 
     return schema.validate(customer);
