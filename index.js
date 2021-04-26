@@ -6,7 +6,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const genres = require('./routes/genres');
 const customers = require('./routes/customers');
-const movies = require('.routes/movies');
+const movies = require('./routes/movies');
 const home = require('./routes/home');
 const mongoose = require('mongoose');
 
