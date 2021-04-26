@@ -5,7 +5,7 @@ const {Customer} = require('../models/customer');
 const {Movie} = require('../models/movie');
 
 router.get('/', async (req, res) => {
-    const rentals = await Rental.find().sort('movie.title');
+    const rentals = await Rental.find().sort('-dateOut');
 
     res.send(rentals);
 });
@@ -20,13 +20,14 @@ router.post('/', async (req, res) => {
     const customer = await Customer.findById(req.body.movieId);
     if(!customer) return res.status(404).send('A customer could not be found with the id provided.');
 
+    if(movie.numberInSock === 0) return res.status(400).send('Movie not in stock');
+
     let rental = produceRental(movie, customer, req.body);
-
     rental = await rental.save();
-    await Movie.findByIdAndUpdate(movie._id, {
-        numberInSock: movie.numberInSock--
-    });
 
+    movie.numberInSock--;
+    movie.save();
+    
     res.send(rental);
 });
 
@@ -42,10 +43,7 @@ async function produceRental(movie, customer, rental){
             name: customer.name,
             isGold: customer.isGold,
             phone: customer.phone
-        },
-        dateOut: rental.dateOut,
-        dateReturned: rental.dateReturned,
-        rentalFee: rental.rentalFee
+        }
     });
 
 }
