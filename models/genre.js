@@ -22,3 +22,4 @@ function validateGenre(genre){
 
 exports.Genre = Genre;
 exports.validate = validateGenre;
+exports.genreSchema = Genre.genreSchema;
