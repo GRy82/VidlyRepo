@@ -30,10 +30,10 @@ router.post('/', async (req, res) => {
         title: req.body.title,
         genre: {
            _id: genre._id,
-           name: genre.name
+           genreTitle: genre.genreTitle
         },
         numberInStock: req.body.numberInStock,
-        dailyRentals: req.body.dailyRentals
+        dailyRentalRate: req.body.dailyRentalRate
     });
 
     movie = await movie.save();
@@ -53,10 +53,10 @@ router.put('/:id', async (req, res) => {
             title: req.body.title,
             genre: {
                 _id: genre._id,
-                name: genre.name
+                genreTitle: genre.genreTitle
             },
             numberInStock: req.body.numberInStock,
-            dailyRentals: req.body.dailyRentals,
+            dailyRentalRate: req.body.dailyRentalRate,
         }
     , { new: true });
 
