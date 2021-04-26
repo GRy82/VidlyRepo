@@ -6,12 +6,54 @@ const {customerSchema} = require('./customer');
 
 const rentalSchema = mongoose.Schema({
     movie: {
-        type: movieSchema,
-        required: true
+        type: new mongoose.Schema({
+            title: {
+                type: String,
+                required: true,
+                trim: true,
+                minlength: 5,
+                maxlength: 50
+            },
+            dailyRentalRate: {
+                type: Number,
+                required: true,
+                min: 0,
+                max: 255
+            }
+        })
     },
     customer: {
-        type: customerSchema,
-        required: true
+        type: new mongoose.Schema({
+            name: {
+                type: String,
+                required: true,
+                minlength: 5,
+                maxlength: 50
+            },
+            isGold: {
+                type: Boolean,
+                default: false
+            },
+            phone: {
+                type: String,
+                required: true,
+                minlength: 5,
+                maxlength: 50
+            },
+            required: true
+        })
+    },
+    dateOut: {
+        type: Date,
+        required: true,
+        default: Date.now
+    },
+    dateReturned: {
+        type: Date
+    },
+    rentalFee: {
+        type: Number,
+        min: 0
     }
 });
 
