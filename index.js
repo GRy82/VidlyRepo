@@ -9,11 +9,13 @@ const customers = require('./routes/customers');
 const movies = require('./routes/movies');
 const rentals = require('./routes/rentals');
 const home = require('./routes/home');
+const { mongo } = require('mongoose');
 const mongoose = require('mongoose');
 
 mongoose.connect('mongodb://localhost/vidly')
     .then(() => console.log('Connected to db...'))
     .catch((err) => console.error('Couldn\'t connect to db: ', err));
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
