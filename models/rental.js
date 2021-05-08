@@ -3,7 +3,7 @@ const Joi = require('joi');
 const {movieSchema} = require('./movie');
 const {customerSchema} = require('./customer');
 
-
+//Mongoose, not MongoDB, is what creates unique _id's for each document/db object.
 const rentalSchema = mongoose.Schema({
     movie: {
         type: new mongoose.Schema({
