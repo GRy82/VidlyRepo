@@ -11,7 +11,15 @@ Fawn.init(mongoose);
 router.get('/', async (req, res) => {
     const rentals = await Rental.find().sort('-dateOut');
 
+    if(!rental) return res.status(404).send('A rental could not be found with the id provided.');
+
     res.send(rentals);
+});
+
+router.get('/:id', async (req, res) => {
+    const rental = await Rental.findById(req.params.id);
+
+    res.send(rental);
 });
 
 router.post('/', async (req, res) => {
