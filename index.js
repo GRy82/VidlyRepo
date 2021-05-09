@@ -12,6 +12,8 @@ const home = require('./routes/home');
 const { mongo } = require('mongoose');
 const mongoose = require('mongoose');
 
+
+//see rentals.js for "under the hood" info on mongoose and mongoDB.
 mongoose.connect('mongodb://localhost/vidly')
     .then(() => console.log('Connected to db...'))
     .catch((err) => console.error('Couldn\'t connect to db: ', err));
