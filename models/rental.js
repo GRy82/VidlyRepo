@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 const Joi = require('joi');
-//imports a method that can be used by Joi class.  
-Joi.objectId = require('joi-objectid')(Joi);
 const {movieSchema} = require('./movie');
 const {customerSchema} = require('./customer');
 

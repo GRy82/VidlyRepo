@@ -1,4 +1,6 @@
-const express = require('express');
+const Joi = require('joi');
+//imports a method that can be used by Joi class.  
+Joi.objectId = require('joi-objectid')(Joi);const express = require('express');
 const app = express();
 const logger = require('./logger');
 const authenticator = require('./authenticator');
