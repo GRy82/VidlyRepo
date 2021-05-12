@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
@@ -19,7 +20,14 @@ router.post('/', async (req, res) => {
     const validPassword = bcrypt.compare(req.body.password, user.password)
     if(!validPassword) return res.status(400).send('Invalid email or password');
 
-    res.send(true);
+    //JSON Web Token: long string that identifies a user.
+    //Client can save the web token and use it for future api requests. WIll be stored in local browser(cache?)
+    //JWT.io is a place where you can debug when working with JSON WebTokens.
+    //Web Token has three properties. Header(alg, typ), Payload(public properties), Digital Signature(private key only available on the server.)
+    //iat property in a decoded web token can be used as a time stamp for the token.
+    const token = jwt.sign({ _id = user._id }, 'jwtPrivateKey');//second is private key/secret. DOn't ever store in source code. It's ok for now.
+    
+    res.send(token);
 });
 
 function validate(req){
