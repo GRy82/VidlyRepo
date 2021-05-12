@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const _ = require('lodash');
+const Joi = require('joi');
 const bcrypt = require('bcrypt');
 const { User, validate } = require('../models/user');
 
