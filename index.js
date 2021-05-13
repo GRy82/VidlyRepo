@@ -1,3 +1,4 @@
+const config = require('config');
 const Joi = require('joi');
 //imports a method that can be used by Joi class.  
 Joi.objectId = require('joi-objectid')(Joi);const express = require('express');
@@ -16,6 +17,10 @@ const home = require('./routes/home');
 const { mongo } = require('mongoose');
 const mongoose = require('mongoose');
 
+if(!config.get('jwtPrivateKey')){
+    console.error('FATAL ERROR: jwtPrivateKey is not defined.');
+    process.exit(1);
+}
 
 //see rentals.js for "under the hood" info on mongoose and mongoDB.
 mongoose.connect('mongodb://localhost/vidly')
