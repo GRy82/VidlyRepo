@@ -1,3 +1,5 @@
+const jwt = require('jsonwebtoken');
+const config = require('config');
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
@@ -23,8 +25,9 @@ router.post('/', async (req, res) => {
     await user.save();
     //stores new object representing the user that doesn't include pw prop.
     user = _.pick(user, ['name', 'email']);
-
-    res.send(user);
+    const token = jwt.sign({ _id = user._id }, config.get('jwtPrivateKey'));
+    //header is another part of the response. First param: is a key, second param is value.
+    res.header('x-auth-token', token).send(user);
 });
 
 module.exports = router;
