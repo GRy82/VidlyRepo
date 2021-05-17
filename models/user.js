@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const Joi = require('joi');
+const jwt = require('jsonwebtoken');
+const config = require('config');
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -23,12 +25,23 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-const User = new mongoose.model('User', userSchema);
+
+//JSON Web Token: long string that identifies a user.
+    //Client can save the web token and use it for future api requests. WIll be stored in local browser(cache?)
+    //JWT.io is a place where you can debug when working with JSON WebTokens.
+    //Web Token has three properties. Header(alg, typ), Payload(public properties), Digital Signature(private key only available on the server.)
+    //iat property in a decoded web token can be used as a time stamp for the token.
+userSchema.methods.generateAuthToken = function(){
+    const token = jwt.sign({ _id: this._id }, config.get('jwtPrivateKey'));
+    return token;
+}
+
+const User = mongoose.model('User', userSchema);
 
 function validateUser(user){
     const schema = Joi.object({
         name: Joi.string().min(5).max(50).required(),
-        email: Join.string().min(5).max(255).required().email(),
+        email: Joi.string().min(5).max(255).required().email(),
         password: Joi.string().min(5).max(255).required()
     });
 

@@ -1,5 +1,3 @@
-const jwt = require('jsonwebtoken');
-const config = require('config');
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
@@ -17,17 +15,15 @@ router.post('/', async (req, res) => {
     if(user) return res.status(400).send('User already registered');
 
     //using lodash to avoid repetition of 'req.body.property' on every line.
-    user = new User(_.pick(user, ['name', 'email', 'password']));
+    user = new User(_.pick(req.body, ['name', 'email', 'password']));
     //salt randomly generated then added to hashed password to encrypt it.
     const salt = await bcrypt.genSalt(10); 
-    user.password = bcrypt.hash(user.password, salt);
-
+    user.password = await bcrypt.hash(user.password, salt);
     await user.save();
-    //stores new object representing the user that doesn't include pw prop.
-    user = _.pick(user, ['name', 'email']);
-    const token = jwt.sign({ _id = user._id }, config.get('jwtPrivateKey'));
+    const token = user.generateAuthToken();
     //header is another part of the response. First param: is a key, second param is value.
-    res.header('x-auth-token', token).send(user);
+    res.header('x-auth-token', token).send(_.pick(user, ['_id', 'name', 'email']));
+    //An object representing the user, but without password property ^^^^^^^
 });
 
 module.exports = router;
