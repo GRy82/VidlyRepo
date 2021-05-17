@@ -1,6 +1,7 @@
 //mongoose and mongoDB "under the hood" info at bottom of File.
 
 const express = require('express');
+const auth = require('../middleware/auth');
 const router = express.Router();
 const Fawn = require('fawn');
 const mongoose = require('mongoose');
@@ -24,7 +25,7 @@ router.get('/:id', async (req, res) => {
     res.send(rental);
 });
 
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
     const result = validate(req.body);
     if(result.error) return res.status(400).send(result.error.details[0].message);
 

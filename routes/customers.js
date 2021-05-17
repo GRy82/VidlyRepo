@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const auth = require('../middleware/auth');
 const { Customer, validate } = require('../models/customer');
 
 router.get('/', async (req, res) => {
@@ -18,7 +19,7 @@ router.get('/:id', async (req, res) => {
     res.send(customer);
 });
 
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
     const result = validate(req.body);
 
     if(result.error) return res.status(400).send(result.error.details[0].message);
