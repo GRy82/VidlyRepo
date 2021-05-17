@@ -23,7 +23,7 @@ router.post('/', async (req, res) => {
     const token = user.generateAuthToken();
     //header is another part of the response. First param: is a key, second param is value.
     res.header('x-auth-token', token).send(_.pick(user, ['_id', 'name', 'email']));
-    //An object representing the user, but without password property ^^^^^^^
+    //An object representing the user, but without password property ^^^^^
 });
 
 module.exports = router;
