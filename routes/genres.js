@@ -1,5 +1,6 @@
 const express = require('express');
 const auth = require('../middleware/auth');
+const admin = require('../middleware/admin');
 const router = express.Router();
 const mongoose = require('mongoose');
 const { Genre, validate } = require('../models/genre');
@@ -45,7 +46,9 @@ router.put('/:id', async (req, res) => {
     res.send(genre);
 });
 
-router.delete('/:id', async (req, res) => {
+//middleware functions passed as array. if auth is verified, and admin is verified
+//then the route handler will be executed. Otherwise, it does not execute.
+router.delete('/:id', [auth, admin], async (req, res) => {
     const genre = await Genre.findByIdAndRemove(req.params.id);
 
     if(!genre) 

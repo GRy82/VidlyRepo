@@ -22,7 +22,8 @@ const userSchema = new mongoose.Schema({
         required: true,
         minlength: 5,
         maxlength: 1024
-    }
+    },
+    isAdmin: Boolean
 });
 
 
@@ -32,7 +33,7 @@ const userSchema = new mongoose.Schema({
     //Web Token has three properties. Header(alg, typ), Payload(public properties), Digital Signature(private key only available on the server.)
     //iat property in a decoded web token can be used as a time stamp for the token.
 userSchema.methods.generateAuthToken = function(){
-    const token = jwt.sign({ _id: this._id }, config.get('jwtPrivateKey'));
+    const token = jwt.sign({ _id: this._id, isAdmin: this.isAdmin }, config.get('jwtPrivateKey'));
     return token;
 }
 
