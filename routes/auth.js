@@ -1,3 +1,5 @@
+//Notes about security at the bottom of file.
+
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
@@ -6,7 +8,7 @@ const Joi = require('joi');
 const bcrypt = require('bcrypt');
 const {User} = require('../models/user');
 
-//registers a user. 
+//Los in as a user. 
 router.post('/', async (req, res) => {
     const result = validate(req.body);
     if(result.error) return res.status(400).send(result.error.details[0].message);
@@ -34,3 +36,13 @@ function validate(req){
 }
 
 module.exports = router;
+
+//Do not store tokens on a server. It allows a malicious hacker to be able to access
+//all tokens in one place. Equivalent to having a centralized place where someone
+//has access to an entire database of driver's licenses or passports.  With tokens,
+//malicious user can make 'authorized' changes. 
+
+//Tokens should be stored on client. If needed to be sent to server, use https.
+//Https provides that what is sent from client to server is encrypted while in traffic.
+//If you were needing to store tokens on a server, make sure tokens are hashed, or 
+//have additional security measures in place.  
