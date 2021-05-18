@@ -21,14 +21,14 @@ router.post('/', async (req, res) => {
     if(user) return res.status(400).send('User already registered');
 
     //using lodash to avoid repetition of 'req.body.property' on every line.
-    user = new User(_.pick(req.body, ['name', 'email', 'password']));
+    user = new User(_.pick(req.body, ['name', 'email', 'password', 'isAdmin']));
     //salt randomly generated then added to hashed password to encrypt it.
     const salt = await bcrypt.genSalt(10); 
     user.password = await bcrypt.hash(user.password, salt);
     await user.save();
     const token = user.generateAuthToken();
     //header is another part of the response. First param: is a key, second param is value.
-    res.header('x-auth-token', token).send(_.pick(user, ['_id', 'name', 'email']));
+    res.header('x-auth-token', token).send(_.pick(user, ['_id', 'name', 'email', 'isAdmin']));
     //An object representing the user, but without password property ^^^^^
 });
 
