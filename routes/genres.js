@@ -1,31 +1,28 @@
 const express = require('express');
+const asyncMiddleware = require('../middleware/async');
 const auth = require('../middleware/auth');
 const admin = require('../middleware/admin');
 const router = express.Router();
 const mongoose = require('mongoose');
 const { Genre, validate } = require('../models/genre');
 
-router.get('/', async (req, res) => {
-    try{
-        const genres = await Genre.find().sort('genreTitle');
-        res.send(genres);
-    }
-    catch(ex){
-        res.status(500).send('Something failed.');
-    }
-});
 
-router.get('/:id', async (req, res) => {
+router.get('/', asyncMiddleware(async (req, res) => {
+   const genres = await Genre.find().sort('genreTitle');
+   res.send(genres);
+}));
+
+router.get('/:id', asyncMiddleware(async (req, res) => {
     const genre = await Genre.findById(req.params.id);
 
     if(!genre) 
         return res.status(404).send('A genre with that id does not exist.');
 
     res.send(genre);
-});
+}));
 
 
-router.post('/', auth, async (req, res) => {
+router.post('/', auth, asyncMiddleware(async (req, res) => {
     const result = validate(req.body);
     if(result.error)
        return res.status(400).send(result.error.details[0].message);
@@ -34,9 +31,9 @@ router.post('/', auth, async (req, res) => {
     genre = await genre.save();
 
     res.send(genre);
-});
+}));
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', asyncMiddleware(async (req, res) => {
     const result = validate(req.body);
     if(result.error) 
         return res.status(400).send(result.error.details[0].message);
@@ -49,7 +46,7 @@ router.put('/:id', async (req, res) => {
         return res.status(404).send('A genre with that id does not exist.');
 
     res.send(genre);
-});
+}));
 
 //middleware functions passed as array. if auth is verified, and admin is verified
 //then the route handler will be executed. Otherwise, it does not execute.

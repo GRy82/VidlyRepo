@@ -1,4 +1,5 @@
 const config = require('config');
+const error = require('./middleware/error');
 const Joi = require('joi');
 //imports a method that can be used by Joi class.  
 Joi.objectId = require('joi-objectid')(Joi);
@@ -40,6 +41,9 @@ app.use('/api/rentals', rentals);
 app.use('/api/users', users);
 app.use('/api/auth', auth);
 app.use('/', home);
+//error middleware
+//must be registered after all other middleware functions
+app.use(error);
 
 //if NODE_ENV is not defined, app.get returns dev env by default.
 if(app.get('env') === 'development'){
