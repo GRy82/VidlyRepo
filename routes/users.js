@@ -1,9 +1,15 @@
 const express = require('express');
+const auth = require('../middleware/auth');
 const router = express.Router();
 const mongoose = require('mongoose');
 const _ = require('lodash');
 const bcrypt = require('bcrypt');
 const { User, validate } = require('../models/user');
+
+router.get('/me', auth, async (req, res) => {
+    const user = await User.findById(req.user._id).select('-password');
+    res.send(user);
+});
 
 //registers a user. 
 router.post('/', async (req, res) => {
