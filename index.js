@@ -24,11 +24,20 @@ const auth = require('./routes/auth');
 const home = require('./routes/home');
 const mongoose = require('mongoose');
 
+//listens for uncaught exception on the level of node, ie. something not 
+//caught at a lower level. Remember that process is global object. 
+process.on('uncaughtException', (ex) => {
+    console.log('WE GOT AN UNCAUGHT EXCEPTION');
+    winston.error(ex.message, ex);
+});
+
 winston.add(winston.transports.File, { filename: 'logfile.log' });
 winston.add(winston.transports.MongoDB, {
     db: 'mongodb://localhost/vidly',
     level: 'info' //info, and higher priority, ie. info, warning, error.
 });
+
+throw new Error('Something failed during startup.');
 
 if(!config.get('jwtPrivateKey')){
     console.error('FATAL ERROR: jwtPrivateKey is not defined.');
