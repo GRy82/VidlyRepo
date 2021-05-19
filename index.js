@@ -1,12 +1,14 @@
-
+const winston = require('winston');
 const express = require('express');
 const helmet = require('helmet');
+const morgan = require('morgan');
 
 const app = express();
 require('./startup/logging');
 require('./startup/routes')(app);
 require('./startup/databaseInit')();
 require('./startup/config')();
+require('./startup/validation')();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
@@ -20,4 +22,4 @@ if(app.get('env') === 'development'){
 }
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`Listening on port ${port}...`));
+app.listen(port, () => winston.info(`Listening on port ${port}...`));
