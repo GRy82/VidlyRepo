@@ -19,8 +19,8 @@ module.exports = function(app) {
     app.use('/api/users', users);
     app.use('/api/auth', auth);
     app.use('/', home);
-//error middleware
-//must be registered after all other middleware functions
-//this line is required for express-async-errors to work.
-app.use(error);
+    //error middleware
+    //must be registered after all other middleware functions
+    //this line is required for express-async-errors to work.
+    app.use(error);
 }
