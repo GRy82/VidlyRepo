@@ -5,6 +5,7 @@ require('express-async-errors');
 //this exports a default logger. larger apps may require a custom logger.
 //has transport(storage device for logs): console, file, http transports. other plugins for logging(mongo, redis, couchdb etc.)
 const winston = require('winston');
+require('winston-mongodb');
 const config = require('config');
 const error = require('./middleware/error');
 const Joi = require('joi');
@@ -21,11 +22,13 @@ const rentals = require('./routes/rentals');
 const users = require('./routes/users');
 const auth = require('./routes/auth');
 const home = require('./routes/home');
-const { mongo } = require('mongoose');
 const mongoose = require('mongoose');
 
 winston.add(winston.transports.File, { filename: 'logfile.log' });
-
+winston.add(winston.transports.MongoDB, {
+    db: 'mongodb://localhost/vidly',
+    level: 'info' //info, and higher priority, ie. info, warning, error.
+});
 
 if(!config.get('jwtPrivateKey')){
     console.error('FATAL ERROR: jwtPrivateKey is not defined.');
