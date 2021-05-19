@@ -1,4 +1,10 @@
+//will add a try-catch error-handler at runtime to a route handler as it is used.
+//allows for less convolution in route handler code by not needing to have to 
+//wrap manually with a middleware function.
 require('express-async-errors');
+//this exports a default logger. larger apps may require a custom logger.
+//has transport(storage device for logs): console, file, http transports. other plugins for logging(mongo, redis, couchdb etc.)
+const winston = require('winston');
 const config = require('config');
 const error = require('./middleware/error');
 const Joi = require('joi');
@@ -6,8 +12,6 @@ const Joi = require('joi');
 Joi.objectId = require('joi-objectid')(Joi);
 const express = require('express');
 const app = express();
-const logger = require('./logger');
-const authenticator = require('./authenticator');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const genres = require('./routes/genres');
@@ -19,6 +23,9 @@ const auth = require('./routes/auth');
 const home = require('./routes/home');
 const { mongo } = require('mongoose');
 const mongoose = require('mongoose');
+
+winston.add(winston.transports.File, { filename: 'logfile.log' });
+
 
 if(!config.get('jwtPrivateKey')){
     console.error('FATAL ERROR: jwtPrivateKey is not defined.');
@@ -44,15 +51,14 @@ app.use('/api/auth', auth);
 app.use('/', home);
 //error middleware
 //must be registered after all other middleware functions
+//this line is required for express-async-errors to work.
 app.use(error);
 
 //if NODE_ENV is not defined, app.get returns dev env by default.
 if(app.get('env') === 'development'){
     app.use(morgan('tiny'));
-    console.log('Mogran enabled...');
+    console.log('Morgan enabled...');
 }
-app.use(logger);
-app.use(authenticator);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening on port ${port}...`));
