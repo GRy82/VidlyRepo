@@ -7,22 +7,16 @@ require('express-async-errors');
 const winston = require('winston');
 require('winston-mongodb');
 const config = require('config');
-const error = require('./middleware/error');
 const Joi = require('joi');
 //imports a method that can be used by Joi class.  
 Joi.objectId = require('joi-objectid')(Joi);
 const express = require('express');
-const app = express();
 const helmet = require('helmet');
-const morgan = require('morgan');
-const genres = require('./routes/genres');
-const customers = require('./routes/customers');
-const movies = require('./routes/movies');
-const rentals = require('./routes/rentals');
-const users = require('./routes/users');
-const auth = require('./routes/auth');
-const home = require('./routes/home');
-const mongoose = require('mongoose');
+
+
+const app = express();
+require('./startup/routes')(app);
+require('./startup/databaseInit')();
 
 //listens for uncaught exception on the level of node, ie. something not 
 //caught at a lower level. Remember that process is global object. 
@@ -57,27 +51,10 @@ if(!config.get('jwtPrivateKey')){
     process.exit(1);
 }
 
-//see rentals.js for "under the hood" info on mongoose and mongoDB.
-mongoose.connect('mongodb://localhost/vidly')
-    .then(() => console.log('Connected to db...'))
-    .catch((err) => console.error('Couldn\'t connect to db: ', err));
-
-
-app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(helmet());
-app.use('/api/genres', genres);
-app.use('/api/customers', customers);
-app.use('/api/movies', movies);
-app.use('/api/rentals', rentals);
-app.use('/api/users', users);
-app.use('/api/auth', auth);
-app.use('/', home);
-//error middleware
-//must be registered after all other middleware functions
-//this line is required for express-async-errors to work.
-app.use(error);
+
 
 //if NODE_ENV is not defined, app.get returns dev env by default.
 if(app.get('env') === 'development'){
