@@ -17,6 +17,7 @@ module.exports = function(){
     // });
 
     winston.handleExceptions( //making new transport separate from that of default logger.
+        new winston.transports.Console({ colorize: true, prettyPrint: true }),
         new winston.transports.File({ filename: 'uncaughtExceptions.log' }));
     //without this, async exception/promise rejection will not be logged.
     //because uncaughtException only works for synchronous processes.
