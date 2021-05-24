@@ -4,7 +4,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 
 const app = express();
-require('./startup/logging');
+require('./startup/logging')();
 require('./startup/routes')(app);
 require('./startup/databaseInit')();
 require('./startup/config')();

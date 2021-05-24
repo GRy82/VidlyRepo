@@ -5,7 +5,7 @@ require('express-async-errors');
 //this exports a default logger. larger apps may require a custom logger.
 //has transport(storage device for logs): console, file, http transports. other plugins for logging(mongo, redis, couchdb etc.)
 const winston = require('winston');
-require('winston-mongodb');
+require('winston-mongodb');//comment out if integration tests start freezing.
 
 module.exports = function(){
     //listens for uncaught exception on the level of node, ie. something not 
