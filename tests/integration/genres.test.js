@@ -3,7 +3,7 @@
 const request = require('supertest');
 const {User} = require ('../../models/user');
 const {Genre} = require('../../models/genre');
-const { rearg } = require('lodash');
+
 let server;
 
 describe('/api/genres', () => {
@@ -35,8 +35,8 @@ describe('/api/genres', () => {
             await genre.save();
             const res = await request(server).get('/api/genres/' + genre._id);
 
-            expect(res.status).toBe(200);
             expect(res.body).toHaveProperty('genreTitle', genre.genreTitle);
+            expect(res.status).toBe(200);
         });
         it('should return 404 if invalid id is passed', async () => {
             const res = await request(server).get('/api/genres/1');

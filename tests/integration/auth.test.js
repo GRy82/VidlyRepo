@@ -1,11 +1,15 @@
 // provides test module with 'request' function.
 const request = require('supertest');
-const {User} = require('../../models/user'); //object destructuring
+const { Genre } = require('../../models/genre');
+const { User } = require('../../models/user'); //object destructuring
 
 describe('auth middleware', () => {
     
     beforeEach(() => { server = require('../../index'); });
-    afterEach(async () => { server.close(); });
+    afterEach(async () => { 
+        await Genre.remove({});
+        server.close();
+    });
 
     let token;
 
@@ -33,5 +37,9 @@ describe('auth middleware', () => {
 
         expect(res.status).toBe(400);
     });
-    
+    it('should return 200 if valid token is provided', async () => {        
+        const res = await exec();
+
+        expect(res.status).toBe(200);
+    });
 });
