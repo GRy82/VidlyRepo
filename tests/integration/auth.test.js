@@ -19,6 +19,13 @@ describe('auth middleware', () => {
     beforeEach(() => {
         token = new User().generateAuthToken();
     });
+    it('should return 401 if no token is provided', async () => {
+        token = '';
+        
+        const res = await exec();
 
+        expect(res.status).toBe(401);
+    });
+    
     
 });
