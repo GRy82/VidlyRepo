@@ -4,6 +4,7 @@ const request = require('supertest');
 const {User} = require ('../../models/user');
 const {Genre} = require('../../models/genre');
 const mongoose = require('mongoose');
+const { before } = require('lodash');
 
 let server;
 
@@ -164,6 +165,24 @@ describe('/api/genres', () => {
             const res = await exec();
 
             expect(res.status).toBe(401);
+        });
+    });
+    describe('DELETE /:id', () => {
+        
+        let id, genre, token;
+
+        const exec = async () => {
+            return await request(server)
+                .delete('/api/genres/' + id)
+                .set('x-auth-token', token)
+                .send({ genreTitle: genreTitle });
+        }
+
+        beforeEach(() => {
+            const genre = new Genre({ genreTitle: 'genre1' });
+            genre.save();
+            id = genre._id;
+            token = new User().generateAuthToken();
         });
     });
 });
