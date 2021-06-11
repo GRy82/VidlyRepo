@@ -123,7 +123,6 @@ describe('/api/genres', () => {
             token = new User().generateAuthToken();
             updatedName = 'genre2';
         });
-
         it('should update the document in the database', async () => {
             await exec();
             const updatedGenre = await Genre.findById(genre._id);
@@ -135,6 +134,36 @@ describe('/api/genres', () => {
 
             expect(res.body).toHaveProperty('genreTitle', updatedName);
             expect(res.body).toHaveProperty('_id');
+        });
+        it('should return 400 error if genreTitle length < 5 chars', async () => {
+            updatedName = 'shrt';
+            const res = await exec();
+
+            expect(res.status).toBe(400);
+        });
+        it('should return 400 error if genreTitle length > 50 chars', async () => {
+            updatedName = new Array(52).join('a');
+            const res = await exec();
+
+            expect(res.status).toBe(400);
+        });
+        it('should return 404 error if genre is not found', async () => {
+            id = mongoose.Types.ObjectId();
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+        it('should return 404 error if id provided is not valid id', async () => {
+            id = 123;
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+        it('should return 401 error if user not logged in', async () => {
+            token = '';
+            const res = await exec();
+
+            expect(res.status).toBe(401);
         });
     });
 });
