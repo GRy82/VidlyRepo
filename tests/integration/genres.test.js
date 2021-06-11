@@ -105,4 +105,36 @@ describe('/api/genres', () => {
             expect(res.body).toHaveProperty('_id');
         });
     });
+
+    describe('PUT /:id', () => {
+        let genre, id, token, updatedName;
+
+        const exec = async () => {
+            return await request(server)
+                .put('/api/genres/' + id)
+                .set('x-auth-token', token)
+                .send({ genreTitle: updatedName });
+        };
+
+        beforeEach( async () => {
+            genre = new Genre({ genreTitle: 'genre1' });
+            await genre.save();
+            id = genre._id;
+            token = new User().generateAuthToken();
+            updatedName = 'genre2';
+        });
+
+        it('should update the document in the database', async () => {
+            await exec();
+            const updatedGenre = await Genre.findById(genre._id);
+            
+            expect(updatedGenre.genreTitle).toBe(updatedName);
+        });
+        it('should return updated object', async () => {
+            const res = await exec();
+
+            expect(res.body).toHaveProperty('genreTitle', updatedName);
+            expect(res.body).toHaveProperty('_id');
+        });
+    });
 });
