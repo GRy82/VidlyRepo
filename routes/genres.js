@@ -51,7 +51,7 @@ router.put('/:id', [auth, validateObjectId] , async (req, res) => {
 
 //middleware functions passed as array. if auth is verified, and admin is verified
 //then the route handler will be executed. Otherwise, it does not execute.
-router.delete('/:id', [auth, admin], async (req, res) => {
+router.delete('/:id', [auth, admin, validateObjectId], async (req, res) => {
     const genre = await Genre.findByIdAndRemove(req.params.id);
 
     if(!genre) 

@@ -8,7 +8,7 @@ const Joi = require('joi');
 const bcrypt = require('bcrypt');
 const {User} = require('../models/user');
 
-//Los in as a user. 
+//Log in as a user. 
 router.post('/', async (req, res) => {
     const result = validate(req.body);
     if(result.error) return res.status(400).send(result.error.details[0].message);
