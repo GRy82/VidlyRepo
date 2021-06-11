@@ -4,7 +4,7 @@ const request = require('supertest');
 const {User} = require ('../../models/user');
 const {Genre} = require('../../models/genre');
 const mongoose = require('mongoose');
-const { before } = require('lodash');
+const { before, stubTrue } = require('lodash');
 
 let server;
 
@@ -175,14 +175,26 @@ describe('/api/genres', () => {
             return await request(server)
                 .delete('/api/genres/' + id)
                 .set('x-auth-token', token)
-                .send({ genreTitle: genreTitle });
+                .send();
         }
 
         beforeEach(() => {
-            const genre = new Genre({ genreTitle: 'genre1' });
+            genre = new Genre({ genreTitle: 'deletable genre' });
             genre.save();
             id = genre._id;
-            token = new User().generateAuthToken();
+            token = new User({ isAdmin: true }).generateAuthToken();
+        });
+        it('should remove genre from database', async () => {
+            await exec();
+            
+            const searchedGenre = await Genre.findById(id);
+            expect(searchedGenre).toBeNull();
+        });
+        it('should return removed genre in response', async () => {
+            const res = await exec();
+
+            expect(res.body).toHaveProperty('_id', genre._id.toHexString());
+            expect(res.body).toHaveProperty('genreTitle', genre.genreTitle);
         });
     });
 });
