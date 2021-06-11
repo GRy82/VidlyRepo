@@ -196,5 +196,29 @@ describe('/api/genres', () => {
             expect(res.body).toHaveProperty('_id', genre._id.toHexString());
             expect(res.body).toHaveProperty('genreTitle', genre.genreTitle);
         });
+        it('should return 404 status if genre with id provided doe not exist', async () => {
+            id = mongoose.Types.ObjectId();
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+        it('should return status 404 if invalid id provided.', async () => {
+            id = 123;
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+        it('should return status code 401 if unauthenticated.', async () => {
+            token = '';
+            const res = await exec();
+
+            expect(res.status).toBe(401);
+        });
+        it('should return status 403 if authenticated but unauthorized.', async () => {
+            token = new User({ isAdmin: false }).generateAuthToken();
+            const res = await exec();
+
+            expect(res.status).toBe(403);
+        });
     });
 });
