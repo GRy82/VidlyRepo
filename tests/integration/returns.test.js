@@ -1,6 +1,7 @@
 const { Rental } = require('../../models/rental');
 const mongoose = require('mongoose');
 const request = require('supertest');
+const { User } = require('../../models/user');
 
 
 describe('/api/returns', () => {
@@ -39,7 +40,22 @@ describe('/api/returns', () => {
 
         expect(res.status).toBe(401);
     });
-    // it('should return 400 if customerId is not valid', () => {
+    it('should return 400 if customerId is not present', async () => {
+        token = new User().generateAuthToken();
+        const res = await request(server)
+            .post('/api/returns')
+            .set('x-auth-token', token)
+            .send({ movieId });
 
-    // });
+        expect(res.status).toBe(400);
+    });
+    it('should return 400 if movieId is not present', async () => {
+        token = new User().generateAuthToken();
+        const res = await request(server)
+            .post('/api/returns')
+            .set('x-auth-token', token)
+            .send({ customerId });
+
+        expect(res.status).toBe(400);
+    });
 });
