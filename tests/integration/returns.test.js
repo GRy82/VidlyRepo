@@ -12,23 +12,20 @@ describe('/api/returns', () => {
     beforeEach(async () => {
         server = require('../../index');
 
-        customerId = mongoose.Types.ObjectId;
-        movieId = mongoose.Types.ObjectId;
-
         rental = new Rental({
             customer: {
-                _id: customerId,
                 name: '12345',
                 phone: '12345'
             },
             movie: {
-                _id: movieId,
                 title: '12345',
                 dailyRentalRate: 2
             }
         });
-
         await rental.save();
+        customerId = rental.customer._id;
+        movieId = rental.movie._id;
+
     });
     afterEach(async () => {
         await Rental.remove({});
@@ -42,7 +39,7 @@ describe('/api/returns', () => {
 
         expect(res.status).toBe(401);
     });
-    it('should return 400 if customerId is not valid', () => {
-        
-    });
+    // it('should return 400 if customerId is not valid', () => {
+
+    // });
 });
