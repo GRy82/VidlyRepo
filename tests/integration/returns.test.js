@@ -1,5 +1,6 @@
 const { Rental } = require('../../models/rental');
 const mongoose = require('mongoose');
+const request = require('supertest');
 
 
 describe('/api/returns', () => {
@@ -8,7 +9,7 @@ describe('/api/returns', () => {
     let movieId;
     let rental;
 
-    beforeEach( async () => {
+    beforeEach(async () => {
         server = require('../../index');
 
         customerId = mongoose.Types.ObjectId;
@@ -26,16 +27,22 @@ describe('/api/returns', () => {
                 dailyRentalRate: 2
             }
         });
-        
+
         await rental.save();
     });
-    afterEach( async () => {
-        server.close();
+    afterEach(async () => {
         await Rental.remove({});
+        await server.close();
     });
     
-    it('should work!', async () => {
-        const result = await Rental.findById(rental._id);
-        expect(result).not.toBeNull();
+    it('should return 401 if client is not logged in!', async () => {
+        const res = await request(server)
+            .post('/api/returns')
+            .send({ customerId, movieId });
+
+        expect(res.status).toBe(401);
+    });
+    it('should return 400 if customerId is not valid', () => {
+        
     });
 });

@@ -14,8 +14,8 @@ describe('/api/genres', () => {
     beforeEach(() => { server = require('../../index'); })
     //afterward, close the server.
     afterEach(async () => {
-        server.close();
         await Genre.remove({});//this empty option removes all.
+        await server.close();
      });
     describe('GET /', () => {
         it('should return all genres', async () => {
