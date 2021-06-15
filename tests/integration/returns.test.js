@@ -53,6 +53,7 @@ describe('/api/returns', () => {
     });
     it('should return 400 if customerId is not present', async () => {
         customerId = '';
+        //delete payload.customerId;   <==== an alternative to the above line.
         const res = await exec();
 
         expect(res.status).toBe(400);
@@ -62,5 +63,20 @@ describe('/api/returns', () => {
         const res = await exec();
 
         expect(res.status).toBe(400);
+    });
+    it('should return 404 if a rental w/ customer is not found', async () => {
+        customerId = mongoose.Types.ObjectId();
+        const res = await exec();
+
+        expect(res.status).toBe(404);
+    });
+    it('should return 404 if a rental w/ movie is not found', async () => {
+        movieId = mongoose.Types.ObjectId();
+        const res = await exec();
+
+        expect(res.status).toBe(404);
+    });
+    it('should return 404 if rental is already returned', () => {
+
     });
 });
