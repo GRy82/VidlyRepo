@@ -1,6 +1,5 @@
 const winston = require('winston');
 const express = require('express');
-const helmet = require('helmet');
 const morgan = require('morgan');
 
 const app = express();
@@ -9,6 +8,7 @@ require('./startup/routes')(app);
 require('./startup/databaseInit')();
 require('./startup/config')();
 require('./startup/validation')();
+require('./startup/prod')(app);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
