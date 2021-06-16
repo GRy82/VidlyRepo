@@ -4,7 +4,6 @@ const request = require('supertest');
 const {User} = require ('../../models/user');
 const {Genre} = require('../../models/genre');
 const mongoose = require('mongoose');
-const { before, stubTrue } = require('lodash');
 
 let server;
 
@@ -19,7 +18,7 @@ describe('/api/genres', () => {
      });
     describe('GET /', () => {
         it('should return all genres', async () => {
-            await Genre.collection.insertMany([
+            await Genre.insertMany([
                 { genreTitle: 'genre1'},
                 { genreTitle: 'genre2' }
             ])
