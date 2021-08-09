@@ -9,7 +9,7 @@ const validateObjectId = require('../middleware/validateObjectId');
 
 router.get('/', async (req, res) => {
     //throw new Error('Could not get the genres.');
-    const genres = await Genre.find().sort('genreTitle');
+    const genres = await Genre.find().sort('title');
     res.send(genres);
 });
 
@@ -28,7 +28,7 @@ router.post('/', auth, async (req, res) => {
     if(result.error)
        return res.status(400).send(result.error.details[0].message);
 
-    let genre = new Genre({ genreTitle: req.body.genreTitle });
+    let genre = new Genre({ title: req.body.title });
     genre = await genre.save();
 
     res.send(genre);
@@ -40,7 +40,7 @@ router.put('/:id', [auth, validateObjectId] , async (req, res) => {
         return res.status(400).send(result.error.details[0].message);
 
     const genre = await Genre.findByIdAndUpdate(req.params.id,
-         {genreTitle: req.body.genreTitle }, 
+         {title: req.body.title }, 
          { new: true });
 
     if(!genre) 

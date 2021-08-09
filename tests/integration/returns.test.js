@@ -24,7 +24,7 @@ describe('/api/returns', () => {
         movie = new Movie({
             _id: movieId,
             title: '12345',
-            genre: { genreTitle: '12345' },
+            genre: { title: '12345' },
             numberInStock: 3,
             dailyRentalRate: 2,
         });
